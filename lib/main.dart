@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:myinsta/responsive/mobile_screen_layout.dart';
+import 'package:myinsta/responsive/responsive_layout.dart';
+import 'package:myinsta/responsive/web_screen_layout.dart';
+import 'package:myinsta/utils/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +17,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My Insta',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: mobileBackgroundColor,
       ),
-      home: const Text('Hello World'),
+      home: const ResponsiveLayout(
+        mobileScreenLayout: MobileScreenLayout(),
+        webScreenLayout: WebScreenLayout(),
+      ),
     );
   }
 }
