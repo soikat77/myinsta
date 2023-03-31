@@ -19,9 +19,9 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
-
   final TextEditingController _bioTextController = TextEditingController();
   final TextEditingController _userNameTextController = TextEditingController();
+  bool isLoading = false;
 
   Uint8List? _image;
 
@@ -40,6 +40,31 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() {
       _image = img;
     });
+  }
+
+  void signupUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    String res = await AuthMethods().signupUser(
+      file: _image!,
+      userName: _userNameTextController.text,
+      bio: _bioTextController.text,
+      email: _emailTextController.text,
+      password: _passwordTextController.text,
+    );
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (res != "Success") {
+      // show warnings
+      if (!mounted) return;
+      showSnackBar(res, context);
+    } else {
+      //
+    }
   }
 
   @override
@@ -136,16 +161,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // CTA - Signup
               InkWell(
-                onTap: () async {
-                  String res = await AuthMethods().signupUser(
-                    file: _image!,
-                    userName: _userNameTextController.text,
-                    bio: _bioTextController.text,
-                    email: _emailTextController.text,
-                    password: _passwordTextController.text,
-                  );
-                  // print(res);
-                },
+                onTap: signupUser,
+                // print(res);
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -158,7 +175,11 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                   ),
-                  child: const Text('Signup'),
+                  child: isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Text('Signup'),
                 ),
               ),
 
