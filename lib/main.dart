@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myinsta/responsive/mobile_screen_layout.dart';
@@ -14,15 +15,19 @@ void main() async {
     await Firebase.initializeApp(
       // only for web
       options: const FirebaseOptions(
-        apiKey: 'AIzaSyAZ7g2BuxHXi0Pn7S_IQpNEJVG8Kih65JQ',
-        appId: "1:579029137093:web:52ea948027df3e97b762ac",
-        messagingSenderId: "579029137093",
+        apiKey: "AIzaSyAZ7g2BuxHXi0Pn7S_IQpNEJVG8Kih65JQ",
+        authDomain: "myinsta-b4476.firebaseapp.com",
         projectId: "myinsta-b4476",
         storageBucket: "myinsta-b4476.appspot.com",
+        messagingSenderId: "579029137093",
+        appId: "1:579029137093:web:52ea948027df3e97b762ac",
+        measurementId: "G-YC8P2ZB5CD",
       ),
     );
   } else {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
   runApp(const MyApp());

@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:myinsta/resources/auth_methods.dart';
+import 'package:myinsta/utils/utils.dart';
 
 import '../utils/colors.dart';
 import '../widgets/input_field.dart';
@@ -14,19 +19,27 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
-  final TextEditingController _password2TextController =
-      TextEditingController();
+
   final TextEditingController _bioTextController = TextEditingController();
   final TextEditingController _userNameTextController = TextEditingController();
+
+  Uint8List? _image;
 
   @override
   void dispose() {
     super.dispose();
     _emailTextController.dispose();
     _passwordTextController.dispose();
-    _password2TextController.dispose();
+
     _bioTextController.dispose();
     _userNameTextController.dispose();
+  }
+
+  void selectImage() async {
+    Uint8List img = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = img;
+    });
   }
 
   @override
@@ -57,11 +70,17 @@ class _SignupScreenState extends State<SignupScreen> {
               // Circular Avatar
               Stack(
                 children: [
-                  const CircleAvatar(
-                    radius: 76,
-                    backgroundImage: NetworkImage(
-                        'https://images.unsplash.com/photo-1584339312444-6952d098e152?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80'),
-                  ),
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 76,
+                          backgroundImage: MemoryImage(_image!),
+                        )
+                      : const CircleAvatar(
+                          radius: 76,
+                          backgroundImage: NetworkImage(
+                            'https://t3.ftcdn.net/jpg/00/64/67/80/360_F_64678017_zUpiZFjj04cnLri7oADnyMH0XBYyQghG.jpg',
+                          ),
+                        ),
                   Positioned(
                     bottom: -0,
                     left: 90,
@@ -69,7 +88,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       radius: 20,
                       backgroundColor: blueColor, //<-- SEE HERE
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: selectImage,
                         highlightColor: Colors.blue[900],
                         icon: const Icon(
                           Icons.add_a_photo,
@@ -115,29 +134,32 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Text Field for Password Confermation Input
-              InputField(
-                textEditingController: _password2TextController,
-                hintText: 'Confirm Your Password',
-                textInputType: TextInputType.text,
-                isPassword: true,
-              ),
-              const SizedBox(height: 24),
-
-              // CTA - Login
-              Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: const ShapeDecoration(
-                  color: blueColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(5),
+              // CTA - Signup
+              InkWell(
+                onTap: () async {
+                  String res = await AuthMethods().signupUser(
+                    file: _image!,
+                    userName: _userNameTextController.text,
+                    bio: _bioTextController.text,
+                    email: _emailTextController.text,
+                    password: _passwordTextController.text,
+                  );
+                  // print(res);
+                },
+                child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: const ShapeDecoration(
+                    color: blueColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
+                      ),
                     ),
                   ),
+                  child: const Text('Signup'),
                 ),
-                child: const Text('Signup'),
               ),
 
               const SizedBox(height: 32),
