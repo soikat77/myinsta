@@ -43,9 +43,15 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void signupUser() async {
-    setState(() {
-      isLoading = true;
-    });
+    if (_image == null) {
+      if (!mounted) return;
+      showSnackBar('No image selected', context);
+    } else {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
     String res = await AuthMethods().signupUser(
       file: _image!,
       userName: _userNameTextController.text,

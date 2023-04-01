@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:myinsta/resources/auth_methods.dart';
 import 'package:myinsta/utils/colors.dart';
 import 'package:myinsta/widgets/input_field.dart';
+
+import '../utils/utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,12 +16,36 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
     super.dispose();
     _emailTextController.dispose();
     _passwordTextController.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await AuthMethods().loginUser(
+      email: _emailTextController.text,
+      password: _passwordTextController.text,
+    );
+
+    if (res != 'Success') {
+      // show warnings
+      if (!mounted) return;
+      showSnackBar(res, context);
+    } else {
+      //
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -64,19 +91,26 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 24),
 
               // CTA - Login
-              Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: const ShapeDecoration(
-                  color: blueColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(5),
+              InkWell(
+                onTap: loginUser,
+                child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: const ShapeDecoration(
+                    color: blueColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
+                      ),
                     ),
                   ),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Text('Login'),
                 ),
-                child: const Text('Login'),
               ),
 
               const SizedBox(height: 32),
