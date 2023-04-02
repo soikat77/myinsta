@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:myinsta/resources/auth_methods.dart';
+import 'package:myinsta/screens/signup_screen.dart';
 import 'package:myinsta/utils/colors.dart';
 import 'package:myinsta/widgets/input_field.dart';
 
+import '../responsive/mobile_screen_layout.dart';
+import '../responsive/responsive_layout.dart';
+import '../responsive/web_screen_layout.dart';
 import '../utils/utils.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -40,12 +44,28 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       showSnackBar(res, context);
     } else {
-      //
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            mobileScreenLayout: MobileScreenLayout(),
+            webScreenLayout: WebScreenLayout(),
+          ),
+        ),
+      );
     }
 
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void navigateToSignup() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SignupScreen(),
+      ),
+    );
   }
 
   @override
@@ -125,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(width: 4),
                   InkWell(
-                    onTap: () {},
+                    onTap: navigateToSignup,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 4, horizontal: 8),
