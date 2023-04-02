@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:myinsta/models/user_models.dart';
 import 'package:myinsta/resources/storage_methods.dart';
 
 class AuthMethods {
@@ -12,7 +13,7 @@ class AuthMethods {
   // signing up a new user
   Future<String> signupUser({
     required Uint8List file,
-    required String userName,
+    required String username,
     required String bio,
     required String email,
     required String password,
@@ -21,7 +22,7 @@ class AuthMethods {
 
     try {
       if (file != null ||
-          userName.isNotEmpty ||
+          username.isNotEmpty ||
           bio.isNotEmpty ||
           email.isNotEmpty ||
           password.isNotEmpty) {
@@ -36,15 +37,19 @@ class AuthMethods {
             .uploadImageToStorage('profilePics', file, false);
 
         // add user in the firebase database
-        await _firestore.collection('users').doc(credential.user!.uid).set({
-          'username': userName,
-          'uid': credential.user!.uid,
-          'email': email,
-          'bio': bio,
-          'followers': [],
-          'following': [],
-          'photoUrl': photoUrl,
-        });
+        UserModel newUser = UserModel(
+          email: email,
+          uid: credential.user!.uid,
+          photoUrl: photoUrl,
+          username: username,
+          bio: bio,
+          followers: [],
+          following: [],
+        );
+
+        await _firestore.collection('users').doc(credential.user!.uid).set(
+              newUser.toJson(),
+            );
         res = "Success";
         // print(res);
       }
