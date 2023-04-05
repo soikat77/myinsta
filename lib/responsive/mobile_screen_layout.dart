@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myinsta/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user_models.dart';
@@ -14,31 +16,103 @@ class MobileScreenLayout extends StatefulWidget {
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
-  // String username = "";
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getUserName();
-  // }
+  int _pageIndex = 0;
+  late PageController pageController;
 
-  // void getUserName() async {
-  //   DocumentSnapshot snapshot = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(FirebaseAuth.instance.currentUser!.uid)
-  //       .get();
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController();
+  }
 
-  //   setState(() {
-  //     username = (snapshot.data() as Map<String, dynamic>)['username'];
-  //   });
-  // }
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
+  void navigationTapped(int value) {
+    pageController.jumpToPage(value);
+  }
+
+  void onPageChanged(int value) {
+    setState(() {
+      _pageIndex = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     // getting user data from provider
-    UserModel user = Provider.of<UserProvider>(context).getUser;
+    // UserModel user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
-      body: Center(
-        child: Text(user.username),
+      body: PageView(
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [
+          Center(
+            child: Text('Home'),
+          ),
+          Center(
+            child: Text('Search'),
+          ),
+          Center(
+            child: Text('Add Post'),
+          ),
+          Center(
+            child: Text('Favorites'),
+          ),
+          Center(
+            child: Text('Profile'),
+          ),
+        ],
+      ),
+      bottomNavigationBar: CupertinoTabBar(
+        backgroundColor: mobileBackgroundColor,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: _pageIndex == 0 ? primaryColor : secondaryColor,
+            ),
+            label: '',
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.search,
+              color: _pageIndex == 1 ? primaryColor : secondaryColor,
+            ),
+            label: '',
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.add_circle,
+              color: _pageIndex == 2 ? primaryColor : secondaryColor,
+            ),
+            label: '',
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.favorite,
+              color: _pageIndex == 3 ? primaryColor : secondaryColor,
+            ),
+            label: '',
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              color: _pageIndex == 4 ? primaryColor : secondaryColor,
+            ),
+            label: '',
+            backgroundColor: primaryColor,
+          ),
+        ],
+        onTap: navigationTapped,
       ),
     );
   }
