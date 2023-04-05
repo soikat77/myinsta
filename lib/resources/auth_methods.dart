@@ -5,12 +5,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myinsta/models/user_models.dart';
 import 'package:myinsta/resources/storage_methods.dart';
+import 'package:provider/provider.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // signing up a new user
+  //* -------------- Get User Data from Database for Provider -------------- *//
+  Future<UserModel> getUserDetails() async {
+    // define current user
+    User currentUser =
+        _auth.currentUser!; // not UserModel, this User is from firebase
+
+    // getting current user id to the snapshot to have all data of that id
+    DocumentSnapshot snapshot =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    // format data and return
+    return UserModel.fromSnapshot(snapshot);
+  }
+
+  //* ------------------------ signing up a new user ------------------------ *//
   Future<String> signupUser({
     required Uint8List file,
     required String username,
@@ -36,7 +51,7 @@ class AuthMethods {
         String photoUrl = await StorageMethods()
             .uploadImageToStorage('profilePics', file, false);
 
-        // add user in the firebase database
+        //* -------------------- add user in the firebase database ------------------- *//
         UserModel newUser = UserModel(
           email: email,
           uid: credential.user!.uid,
@@ -59,7 +74,7 @@ class AuthMethods {
     return res;
   }
 
-  // log in user
+  //* ------------------------------- log in user ------------------------------ *//
   Future<String> loginUser({
     required String email,
     required String password,

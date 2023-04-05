@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/user_models.dart';
+import '../providers/user_provider.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -10,29 +14,31 @@ class MobileScreenLayout extends StatefulWidget {
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
-  String username = "";
-  @override
-  void initState() {
-    super.initState();
-    getUserName();
-  }
+  // String username = "";
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getUserName();
+  // }
 
-  void getUserName() async {
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+  // void getUserName() async {
+  //   DocumentSnapshot snapshot = await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .get();
 
-    setState(() {
-      username = (snapshot.data() as Map<String, dynamic>)['username'];
-    });
-  }
+  //   setState(() {
+  //     username = (snapshot.data() as Map<String, dynamic>)['username'];
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    // getting user data from provider
+    UserModel user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       body: Center(
-        child: Text('Loged in as $username'),
+        child: Text(user.username),
       ),
     );
   }
