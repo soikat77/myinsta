@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myinsta/providers/user_provider.dart';
+import 'package:myinsta/resources/auth_methods.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';

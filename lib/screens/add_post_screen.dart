@@ -19,6 +19,7 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _file;
   final TextEditingController _captionController = TextEditingController();
+  bool _isLoading = false;
 
   //* ----------------- getting image from camera or gallary ----------------- *//
   _selectImage(BuildContext context) async {
@@ -68,6 +69,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
     String username,
     String profileImage,
   ) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       // try to upload and get the response
       String res = await FirestoreMethods().uploadPost(
@@ -78,6 +82,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
         profileImage,
       );
       if (res == 'Success') {
+        setState(() {
+          _isLoading = false;
+        });
+        clearImage();
         if (!mounted) return;
         showSnackBar('Your Post has been created!', context);
       } else {
@@ -88,6 +96,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
       if (!mounted) return;
       showSnackBar(err.toString(), context);
     }
+  }
+
+  void clearImage() {
+    setState(() {
+      _file = null;
+    });
   }
 
   @override
@@ -101,19 +115,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
     // getting user data from provider
     final UserModel user = Provider.of<UserProvider>(context).getUser;
 
+    //* ----------------------------------- ui parts ----------------------------------- *//
     return _file == null
+        // image not choosen
         ? Center(
             child: IconButton(
               onPressed: () => _selectImage(context),
               icon: const Icon(Icons.upload),
             ),
           )
+        // after image choosen
         : Scaffold(
             appBar: AppBar(
               backgroundColor: mobileBackgroundColor,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () {},
+                onPressed: clearImage,
               ),
               title: const Text('Post to'),
               actions: [
@@ -139,6 +156,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
+                    _isLoading ? const LinearProgressIndicator() : Container(),
                     Container(
                       height: MediaQuery.of(context).size.height * 0.4,
                       decoration: BoxDecoration(

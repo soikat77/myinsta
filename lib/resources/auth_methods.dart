@@ -25,6 +25,15 @@ class AuthMethods {
     return UserModel.fromSnapshot(snapshot);
   }
 
+  // Future<bool> isAuthenticated() async {
+  //   if (_auth.currentUser != null) {
+  //     // signed in
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
+
   //* ------------------------ signing up a new user ------------------------ *//
   Future<String> signupUser({
     required Uint8List file,
