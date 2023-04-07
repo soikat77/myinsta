@@ -19,6 +19,7 @@ class UserModel {
     required this.following,
   });
 
+  // convert to Json format
   Map<String, dynamic> toJson() => {
         'email': email,
         'uid': uid,
@@ -29,7 +30,7 @@ class UserModel {
         'following': following,
       };
 
-  //* ----------------------------------- formating user data from he snapshot ---------------------------------- *//
+  // formating user data from the snapshot
   static UserModel fromSnapshot(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return UserModel(

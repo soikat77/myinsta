@@ -3,9 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myinsta/utils/colors.dart';
+import 'package:myinsta/utils/global_variables.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user_models.dart';
+import '../models/user_model.dart';
 import '../providers/user_provider.dart';
 
 class MobileScreenLayout extends StatefulWidget {
@@ -50,26 +51,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         controller: pageController,
         onPageChanged: onPageChanged,
         physics: const NeverScrollableScrollPhysics(),
-        children: const [
-          Center(
-            child: Text('Home'),
-          ),
-          Center(
-            child: Text('Search'),
-          ),
-          Center(
-            child: Text('Add Post'),
-          ),
-          Center(
-            child: Text('Favorites'),
-          ),
-          Center(
-            child: Text('Profile'),
-          ),
-        ],
+        children: homeScreenItems,
       ),
       bottomNavigationBar: CupertinoTabBar(
         backgroundColor: mobileBackgroundColor,
+        onTap: navigationTapped,
         items: [
           BottomNavigationBarItem(
             icon: Icon(
@@ -112,7 +98,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             backgroundColor: primaryColor,
           ),
         ],
-        onTap: navigationTapped,
       ),
     );
   }
