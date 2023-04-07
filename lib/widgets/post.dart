@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:myinsta/utils/colors.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({super.key});
+  final snap;
+  const PostCard({super.key, required this.snap});
 
   @override
   Widget build(BuildContext context) {
@@ -17,19 +19,19 @@ class PostCard extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // profile image
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 22,
-                backgroundImage: NetworkImage(
-                    'https://images.pexels.com/photos/7249743/pexels-photo-7249743.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+                backgroundImage: NetworkImage(snap['profileImage']),
               ),
 
               // username
-              const Expanded(
+              Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
-                    'Soikat Alam',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    snap['username'],
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ),
               ),
@@ -66,17 +68,22 @@ class PostCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: RichText(
-              text: const TextSpan(
-                style: TextStyle(color: Colors.black, fontSize: 18),
+              text: TextSpan(
+                style: const TextStyle(color: Colors.black, fontSize: 18),
                 children: <TextSpan>[
                   TextSpan(
-                    text:
-                        'Post Caption. Post Caption. Post Caption. Post Caption. Post Caption.',
-                    style: TextStyle(color: primaryColor),
+                    text: snap['caption'],
+                    style: const TextStyle(color: primaryColor),
+                  ),
+                  const TextSpan(
+                    text: ' at ',
+                    style: TextStyle(color: secondaryColor, fontSize: 16),
                   ),
                   TextSpan(
-                    text: ' at 05.36 PM in Dhaka',
-                    style: TextStyle(color: secondaryColor, fontSize: 16),
+                    text: DateFormat.yMMMd().format(
+                      snap['datePublished'].toDate(),
+                    ),
+                    style: const TextStyle(color: secondaryColor, fontSize: 16),
                   )
                 ],
               ),
@@ -88,7 +95,7 @@ class PostCard extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.5,
             width: double.infinity,
             child: Image.network(
-              'https://images.pexels.com/photos/2087322/pexels-photo-2087322.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+              snap['postUrl'],
               fit: BoxFit.cover,
             ),
           ),
@@ -104,7 +111,7 @@ class PostCard extends StatelessWidget {
                   size: 24,
                 ),
               ),
-              const Text('1,257 Likes'),
+              Text(snap['likes'].length.toString()),
 
               // comments
               IconButton(
@@ -114,7 +121,7 @@ class PostCard extends StatelessWidget {
                   size: 22,
                 ),
               ),
-              const Text('57 comments'),
+              // Text(snap['likes'].length.toString()),
 
               // share
               IconButton(
