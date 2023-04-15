@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myinsta/models/user_model.dart';
 import 'package:myinsta/providers/user_provider.dart';
+import 'package:myinsta/resources/firestore_methods.dart';
 import 'package:myinsta/utils/colors.dart';
 import 'package:myinsta/widgets/heart_animation.dart';
 import 'package:provider/provider.dart';
@@ -114,7 +115,12 @@ class _PostCardState extends State<PostCard> {
 
           //* ------------------------------- post image ------------------------------- *//
           GestureDetector(
-            onDoubleTap: () {
+            onDoubleTap: () async {
+              await FirestoreMethods().likePost(
+                widget.snap['postid'],
+                user.uid,
+                widget.snap['likes'],
+              );
               setState(() {
                 isAnimate = true;
               });
@@ -170,12 +176,24 @@ class _PostCardState extends State<PostCard> {
                 isAnimate: widget.snap['likes'].contains(user.uid),
                 smallLike: true,
                 child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: 24,
-                  ),
+                  onPressed: () async {
+                    await FirestoreMethods().likePost(
+                      widget.snap['postid'],
+                      user.uid,
+                      widget.snap['likes'],
+                    );
+                  },
+                  icon: widget.snap['likes'].contains(user.uid)
+                      ? const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: 24,
+                        )
+                      : const Icon(
+                          Icons.favorite_border,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                 ),
               ),
               Text(widget.snap['likes'].length.toString()),
