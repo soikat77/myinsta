@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:myinsta/models/user_model.dart';
 import 'package:myinsta/providers/user_provider.dart';
 import 'package:myinsta/resources/firestore_methods.dart';
+import 'package:myinsta/screens/comment_screen.dart';
 import 'package:myinsta/utils/colors.dart';
 import 'package:myinsta/widgets/heart_animation.dart';
 import 'package:provider/provider.dart';
@@ -200,7 +201,11 @@ class _PostCardState extends State<PostCard> {
 
               // comments
               IconButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const CommentScreen(),
+                  ),
+                ),
                 icon: const Icon(
                   Icons.comment_outlined,
                   size: 22,
