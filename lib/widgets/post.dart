@@ -203,7 +203,7 @@ class _PostCardState extends State<PostCard> {
               IconButton(
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const CommentScreen(),
+                    builder: (context) => CommentScreen(snap: widget.snap),
                   ),
                 ),
                 icon: const Icon(

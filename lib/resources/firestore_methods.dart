@@ -50,6 +50,7 @@ class FirestoreMethods {
     return res;
   }
 
+  //* ----------------------------- like and unlike ---------------------------- *//
   Future<void> likePost(
     String postid,
     String uid,
@@ -64,6 +65,38 @@ class FirestoreMethods {
         await _firestore.collection('posts').doc(postid).update({
           'likes': FieldValue.arrayUnion([uid])
         });
+      }
+    } catch (e) {
+      // print(e.toString());
+    }
+  }
+
+  //* --------------------------------- Comment -------------------------------- *//
+  Future<void> postComment(
+    String postid,
+    String text,
+    String uid,
+    String username,
+    String profilePic,
+  ) async {
+    try {
+      if (text.isNotEmpty) {
+        String commentId = const Uuid().v1();
+        await _firestore
+            .collection('posts')
+            .doc(postid)
+            .collection('comments')
+            .doc(commentId)
+            .set({
+          'postid': postid,
+          'text': text,
+          'uid': uid,
+          'username': username,
+          'profilePic': profilePic,
+          'datePublished': DateTime.now(),
+        });
+      } else {
+        print('Text is empty, write something first.');
       }
     } catch (e) {
       print(e.toString());

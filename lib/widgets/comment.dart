@@ -9,6 +9,8 @@ class Comment extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CircleAvatar(
             radius: 22,
@@ -20,7 +22,7 @@ class Comment extends StatelessWidget {
               padding: const EdgeInsets.only(left: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   RichText(
                     text: const TextSpan(
