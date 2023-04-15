@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myinsta/utils/colors.dart';
+import 'package:myinsta/widgets/comment.dart';
 
 class CommentScreen extends StatefulWidget {
   const CommentScreen({super.key});
@@ -16,6 +17,7 @@ class _CommentScreenState extends State<CommentScreen> {
         title: const Text('Comments'),
         backgroundColor: mobileBackgroundColor,
       ),
+      body: const Comment(),
       bottomNavigationBar: SafeArea(
         child: Container(
           height: kToolbarHeight,
