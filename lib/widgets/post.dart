@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myinsta/models/user_model.dart';
@@ -6,6 +7,7 @@ import 'package:myinsta/providers/user_provider.dart';
 import 'package:myinsta/resources/firestore_methods.dart';
 import 'package:myinsta/screens/comment_screen.dart';
 import 'package:myinsta/utils/colors.dart';
+import 'package:myinsta/utils/utils.dart';
 import 'package:myinsta/widgets/heart_animation.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +21,29 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isAnimate = false;
+  int commentLen = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  void getComments() async {
+    try {
+      QuerySnapshot commentSnap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postid'])
+          .collection('comments')
+          .get();
+
+      commentLen = commentSnap.docs.length;
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+      // print(e.toString());
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +95,20 @@ class _PostCardState extends State<PostCard> {
                       child: ListView(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shrinkWrap: true,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Text('Delete'),
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              FirestoreMethods()
+                                  .deletePost(widget.snap['postid']);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text('Delete'),
+                            ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          const Padding(
+                            padding: EdgeInsets.all(16),
                             child: Text('Report'),
                           ),
                         ],
@@ -211,7 +243,7 @@ class _PostCardState extends State<PostCard> {
                   size: 22,
                 ),
               ),
-              // Text(snap['likes'].length.toString()),
+              // Text(commentLen.toString()),
 
               // share
               IconButton(
