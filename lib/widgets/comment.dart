@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:myinsta/utils/colors.dart';
 
 class Comment extends StatelessWidget {
-  const Comment({super.key});
+  final snap;
+  const Comment({super.key, required this.snap});
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +14,9 @@ class Comment extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 22,
-            backgroundImage: NetworkImage(
-                'https://images.pexels.com/photos/459976/pexels-photo-459976.jpeg'),
+            backgroundImage: NetworkImage(snap['profilePic']), // widget.snap
           ),
           Expanded(
             child: Padding(
@@ -25,16 +26,15 @@ class Comment extends StatelessWidget {
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
-                          text: 'username :',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          text: snap['username'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text:
-                              ' commented text shows here. wdqwd qdqwq qaxd qw qdq q sq commented text shows here. wdqwd qdqwq qaxd qw qdq q sq commented text shows here. wdqwd qdqwq qaxd qw qdq q sq',
-                          style: TextStyle(
+                          text: ' : ${snap['text']}',
+                          style: const TextStyle(
                               fontWeight: FontWeight.w400,
                               color: secondaryColor),
                         ),
@@ -44,18 +44,28 @@ class Comment extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        '25/02/2025',
-                        style: TextStyle(
+                      Text(
+                        '${DateFormat.jm().format(snap['datePublished'].toDate())} ',
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.thumb_up,
-                          size: 14,
+                      Text(
+                        DateFormat.yMMMEd()
+                            .format(snap['datePublished'].toDate()),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Expanded(
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.thumb_up,
+                            size: 14,
+                          ),
                         ),
                       ),
                     ],

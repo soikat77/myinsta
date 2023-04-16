@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myinsta/models/user_model.dart';
 import 'package:myinsta/providers/user_provider.dart';
@@ -33,7 +34,30 @@ class _CommentScreenState extends State<CommentScreen> {
         title: const Text('Comments'),
         backgroundColor: mobileBackgroundColor,
       ),
-      body: const Comment(),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.snap['postid'])
+            .collection('comments')
+            .orderBy('datePublished', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          // show progress indicator before getting the data
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          // after getting the data
+          return ListView.builder(
+            itemCount: (snapshot.data! as dynamic).docs.length,
+            itemBuilder: (context, index) => Comment(
+              snap: (snapshot.data! as dynamic).docs[index].data(),
+            ),
+          );
+        },
+      ),
       bottomNavigationBar: SafeArea(
         child: Container(
           height: kToolbarHeight,
@@ -57,6 +81,7 @@ class _CommentScreenState extends State<CommentScreen> {
               ),
             ),
             InkWell(
+              // post the comment to database
               onTap: () async {
                 await FirestoreMethods().postComment(
                   widget.snap['postid'],
@@ -65,6 +90,10 @@ class _CommentScreenState extends State<CommentScreen> {
                   user.username,
                   user.photoUrl,
                 );
+                // clear the text
+                setState(() {
+                  _commentText.clear();
+                });
               },
               child: Container(
                 padding: const EdgeInsets.all(8),
