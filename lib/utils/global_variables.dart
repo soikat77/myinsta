@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:myinsta/screens/add_post_screen.dart';
 
 import '../screens/feed_screen.dart';
+import '../screens/search_screen.dart';
 
 const webScreenSize = 600;
 
 const homeScreenItems = [
   Center(
-    child: FeedScreen(),
+    child: SearchScreen(),
   ),
   Center(
-    child: Text('Search'),
+    child: FeedScreen(),
   ),
   Center(
     child: AddPostScreen(),
