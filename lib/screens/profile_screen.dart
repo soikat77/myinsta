@@ -1,22 +1,64 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:myinsta/utils/colors.dart';
+import 'package:myinsta/utils/utils.dart';
 
 import '../widgets/follow_btn.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final String uid;
+  const ProfileScreen({super.key, required this.uid});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  var userData = {};
+  int postLen = 0;
+  int followerCount = 0;
+  int followingCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  getUserData() async {
+    try {
+      // get user id
+      var userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.uid)
+          .get();
+
+      // get post length
+      var postSnapshot = await FirebaseFirestore.instance
+          .collection('posts')
+          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      // get follower count
+
+      followerCount = userSnapshot.data()!['followers'].length;
+      followingCount = userSnapshot.data()!['following'].length;
+      postLen = postSnapshot.docs.length;
+      userData = userSnapshot.data()!;
+      setState(() {});
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
-        title: Text('username'),
+        title: Text(userData['username']),
       ),
       body: ListView(
         children: [
@@ -26,10 +68,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Row(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 52,
-                      backgroundImage: NetworkImage(
-                          'https://images.pexels.com/photos/2465818/pexels-photo-2465818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+                      backgroundImage: NetworkImage(userData['photoUrl']),
                     ),
                     Expanded(
                       child: Column(
@@ -38,9 +79,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              buildStatColumn(28, 'Post'),
-                              buildStatColumn(155, 'Follower'),
-                              buildStatColumn(13, 'Following'),
+                              buildStatColumn(postLen, 'Post'),
+                              buildStatColumn(followerCount, 'Follower'),
+                              buildStatColumn(followerCount, 'Following'),
                             ],
                           ),
                           Row(
@@ -64,9 +105,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   alignment: Alignment.centerLeft,
                   // padding: const EdgeInsets.only(left: 8),
-                  child: const Text(
-                    'username',
-                    style: TextStyle(
+                  child: Text(
+                    userData['username'],
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -75,9 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   alignment: Alignment.centerLeft,
                   // padding: const EdgeInsets.only(left: 8),
-                  child: const Text(
-                    'dhqwuiohdqw wdch wcbhw iohcf jhxc df di9qwuw awdchnw cnascdh',
-                    style: TextStyle(
+                  child: Text(
+                    userData['bio'],
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w300,
                     ),
