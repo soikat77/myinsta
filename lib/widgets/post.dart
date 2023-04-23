@@ -11,6 +11,8 @@ import 'package:myinsta/utils/utils.dart';
 import 'package:myinsta/widgets/heart_animation.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/profile_screen.dart';
+
 class PostCard extends StatefulWidget {
   final snap;
   const PostCard({super.key, required this.snap});
@@ -61,15 +63,24 @@ class _PostCardState extends State<PostCard> {
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //* ---------------------------- profile image ---------------------------- *//
-              CachedNetworkImage(
-                imageUrl: widget.snap['profileImage'],
-                placeholder: (context, url) => const CircleAvatar(
-                  backgroundColor: Colors.amber,
-                  radius: 22,
+              InkWell(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                      uid: widget.snap['uid'],
+                    ),
+                  ),
                 ),
-                imageBuilder: (context, image) => CircleAvatar(
-                  backgroundImage: image,
-                  radius: 22,
+                child: CachedNetworkImage(
+                  imageUrl: widget.snap['profileImage'],
+                  placeholder: (context, url) => const CircleAvatar(
+                    backgroundColor: Colors.amber,
+                    radius: 22,
+                  ),
+                  imageBuilder: (context, image) => CircleAvatar(
+                    backgroundImage: image,
+                    radius: 22,
+                  ),
                 ),
               ),
 
@@ -77,10 +88,19 @@ class _PostCardState extends State<PostCard> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    widget.snap['username'],
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18),
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(
+                          uid: widget.snap['uid'],
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      widget.snap['username'],
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
                   ),
                 ),
               ),
