@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -107,6 +108,40 @@ class FirestoreMethods {
   Future<void> deletePost(String postid) async {
     try {
       await _firestore.collection('posts').doc(postid).delete();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  //* ---------------------------- Follow / Unfollow --------------------------- *//
+  Future<void> followUser(String uid, String followId) async {
+    try {
+      // getting userid
+      DocumentSnapshot snapshot =
+          await _firestore.collection('users').doc(uid).get();
+      List following = (snapshot.data()! as dynamic)['following'];
+
+      if (following.contains(followId)) {
+        // remove user id from the data of whoom user following
+        await _firestore.collection('users').doc(followId).update({
+          'followers': FieldValue.arrayRemove([uid])
+        });
+
+        // remove the id of whoom user following from the data of user id
+        await _firestore.collection('users').doc(uid).update({
+          'following': FieldValue.arrayRemove([followId])
+        });
+      } else {
+        // add user id in the data of whoom user start to follow
+        await _firestore.collection('users').doc(followId).update({
+          'followers': FieldValue.arrayUnion([uid])
+        });
+
+        // add the id of whoom user start to follow in the data of user id
+        await _firestore.collection('users').doc(uid).update({
+          'following': FieldValue.arrayUnion([followId])
+        });
+      }
     } catch (e) {
       print(e.toString());
     }

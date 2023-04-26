@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:myinsta/screens/profile_screen.dart';
 import 'package:myinsta/utils/colors.dart';
+import 'package:myinsta/utils/global_variables.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -93,15 +94,25 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
 
-                return MasonryGridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5,
-                  crossAxisSpacing: 5,
-                  itemCount: (snapshot.data! as dynamic).docs.length,
-                  itemBuilder: (context, index) => Image.network(
-                    (snapshot.data! as dynamic).docs[index]['postUrl'],
-                  ),
-                );
+                return MediaQuery.of(context).size.width > webScreenSize
+                    ? MasonryGridView.count(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 5,
+                        crossAxisSpacing: 5,
+                        itemCount: (snapshot.data! as dynamic).docs.length,
+                        itemBuilder: (context, index) => Image.network(
+                          (snapshot.data! as dynamic).docs[index]['postUrl'],
+                        ),
+                      )
+                    : MasonryGridView.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 5,
+                        crossAxisSpacing: 5,
+                        itemCount: (snapshot.data! as dynamic).docs.length,
+                        itemBuilder: (context, index) => Image.network(
+                          (snapshot.data! as dynamic).docs[index]['postUrl'],
+                        ),
+                      );
               },
             ),
     );
